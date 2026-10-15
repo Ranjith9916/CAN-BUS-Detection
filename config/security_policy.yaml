@@ -1,0 +1,59 @@
+# =============================================================================
+# Security Policy Configuration
+# =============================================================================
+
+authentication:
+  # CAN IDs that require authentication
+  protected_ids:
+    - 0x100  # ENGINE_STATUS
+    - 0x102  # BRAKE_STATUS
+    - 0x103  # STEERING_STATUS
+    - 0x104  # ACCELERATOR
+    - 0x105  # GEAR_STATUS
+
+  # CAN IDs that do NOT require authentication (informational)
+  unprotected_ids:
+    - 0x101  # VEHICLE_SPEED (instrument cluster read)
+    - 0x106  # TEMPERATURE
+    - 0x107  # VEHICLE_STATUS
+    - 0x200  # INFOTAINMENT_STATUS
+    - 0x201  # INFOTAINMENT_COMMAND
+
+  default_policy: "REJECT"  # ACCEPT | REJECT — for unknown IDs
+
+freshness:
+  # Per-ID freshness policy
+  policies:
+    0x100:
+      mechanism: "monotonic_counter"
+      max_counter_jump: 50
+    0x102:
+      mechanism: "monotonic_counter"
+      max_counter_jump: 50
+    0x103:
+      mechanism: "monotonic_counter"
+      max_counter_jump: 100
+    0x104:
+      mechanism: "monotonic_counter"
+      max_counter_jump: 50
+    0x105:
+      mechanism: "monotonic_counter"
+      max_counter_jump: 100
+
+response:
+  # Response actions by severity
+  severity_actions:
+    NORMAL:
+      actions: ["LOG"]
+    LOW:
+      actions: ["LOG", "FLAG"]
+    MEDIUM:
+      actions: ["LOG", "ALERT", "FLAG"]
+    HIGH:
+      actions: ["LOG", "ALERT", "QUARANTINE_SIMULATION_MESSAGE"]
+    CRITICAL:
+      actions: ["LOG", "ALERT", "REJECT_SIMULATED_MESSAGE"]
+
+  # Rate limiting for responses
+  max_alerts_per_can_id_per_minute: 10
+  alert_cooldown_seconds: 5

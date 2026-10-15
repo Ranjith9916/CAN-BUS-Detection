@@ -1,0 +1,218 @@
+# =============================================================================
+# CAN ID Map — Simulation IDs
+# =============================================================================
+# WARNING: These are SIMULATION IDs for research purposes only.
+# They do NOT represent real production vehicle CAN IDs.
+# =============================================================================
+
+can_ids:
+  # Engine ECU signals
+  0x100:
+    name: "ENGINE_STATUS"
+    source_ecu: "engine"
+    dlc: 8
+    period_ms: 10
+    description: "Engine RPM, temperature, state"
+    signals:
+      - name: "rpm"
+        start_byte: 0
+        length_bytes: 2
+        min_value: 0
+        max_value: 8000
+        unit: "rpm"
+      - name: "engine_temp"
+        start_byte: 2
+        length_bytes: 2
+        min_value: -40
+        max_value: 150
+        unit: "celsius"
+      - name: "engine_state"
+        start_byte: 4
+        length_bytes: 1
+        min_value: 0
+        max_value: 3
+        description: "0=OFF, 1=CRANKING, 2=RUNNING, 3=ERROR"
+
+  # Instrument Cluster — Vehicle Speed
+  0x101:
+    name: "VEHICLE_SPEED"
+    source_ecu: "instrument_cluster"
+    dlc: 8
+    period_ms: 100
+    description: "Vehicle speed and odometer"
+    signals:
+      - name: "speed"
+        start_byte: 0
+        length_bytes: 2
+        min_value: 0
+        max_value: 300
+        unit: "km/h"
+      - name: "odometer"
+        start_byte: 2
+        length_bytes: 4
+        min_value: 0
+        max_value: 9999999
+        unit: "km"
+
+  # Brake ECU
+  0x102:
+    name: "BRAKE_STATUS"
+    source_ecu: "brake"
+    dlc: 8
+    period_ms: 10
+    description: "Brake pressure, ABS, wheel speeds"
+    signals:
+      - name: "brake_pressure"
+        start_byte: 0
+        length_bytes: 2
+        min_value: 0
+        max_value: 200
+        unit: "bar"
+      - name: "abs_active"
+        start_byte: 2
+        length_bytes: 1
+        min_value: 0
+        max_value: 1
+      - name: "wheel_speed_avg"
+        start_byte: 3
+        length_bytes: 2
+        min_value: 0
+        max_value: 300
+        unit: "km/h"
+
+  # Steering ECU
+  0x103:
+    name: "STEERING_STATUS"
+    source_ecu: "steering"
+    dlc: 8
+    period_ms: 20
+    description: "Steering angle and torque"
+    signals:
+      - name: "steering_angle"
+        start_byte: 0
+        length_bytes: 2
+        min_value: -540
+        max_value: 540
+        unit: "degrees"
+      - name: "steering_torque"
+        start_byte: 2
+        length_bytes: 2
+        min_value: -100
+        max_value: 100
+        unit: "nm"
+
+  # Engine ECU — Accelerator
+  0x104:
+    name: "ACCELERATOR"
+    source_ecu: "engine"
+    dlc: 8
+    period_ms: 10
+    description: "Accelerator pedal position"
+    signals:
+      - name: "pedal_position"
+        start_byte: 0
+        length_bytes: 2
+        min_value: 0
+        max_value: 100
+        unit: "percent"
+
+  # Transmission ECU — Gear
+  0x105:
+    name: "GEAR_STATUS"
+    source_ecu: "transmission"
+    dlc: 8
+    period_ms: 50
+    description: "Current gear and transmission state"
+    signals:
+      - name: "gear"
+        start_byte: 0
+        length_bytes: 1
+        min_value: 0
+        max_value: 8
+        description: "0=P, 1=R, 2=N, 3=D1, 4=D2, 5=D3, 6=D4, 7=D5, 8=D6"
+      - name: "trans_state"
+        start_byte: 1
+        length_bytes: 1
+        min_value: 0
+        max_value: 2
+        description: "0=PARK, 1=DRIVE, 2=ERROR"
+
+  # Engine ECU — Temperature
+  0x106:
+    name: "TEMPERATURE"
+    source_ecu: "engine"
+    dlc: 8
+    period_ms: 1000
+    description: "Coolant and oil temperatures"
+    signals:
+      - name: "coolant_temp"
+        start_byte: 0
+        length_bytes: 2
+        min_value: -40
+        max_value: 150
+        unit: "celsius"
+      - name: "oil_temp"
+        start_byte: 2
+        length_bytes: 2
+        min_value: -40
+        max_value: 180
+        unit: "celsius"
+
+  # Instrument Cluster — Vehicle Status
+  0x107:
+    name: "VEHICLE_STATUS"
+    source_ecu: "instrument_cluster"
+    dlc: 8
+    period_ms: 500
+    description: "Warning lights and vehicle status"
+    signals:
+      - name: "warning_flags"
+        start_byte: 0
+        length_bytes: 2
+        min_value: 0
+        max_value: 65535
+        description: "Bitmask of warning indicators"
+      - name: "fuel_level"
+        start_byte: 2
+        length_bytes: 1
+        min_value: 0
+        max_value: 100
+        unit: "percent"
+
+  # Infotainment ECU
+  0x200:
+    name: "INFOTAINMENT_STATUS"
+    source_ecu: "infotainment"
+    dlc: 8
+    period_ms: 200
+    description: "Media and climate status"
+    signals:
+      - name: "media_state"
+        start_byte: 0
+        length_bytes: 1
+        min_value: 0
+        max_value: 3
+      - name: "volume"
+        start_byte: 1
+        length_bytes: 1
+        min_value: 0
+        max_value: 100
+      - name: "climate_temp_set"
+        start_byte: 2
+        length_bytes: 1
+        min_value: 16
+        max_value: 30
+        unit: "celsius"
+
+  0x201:
+    name: "INFOTAINMENT_COMMAND"
+    source_ecu: "infotainment"
+    dlc: 8
+    period_ms: 0  # Event-driven, not periodic
+    description: "Infotainment control commands"
+    signals:
+      - name: "command_id"
+        start_byte: 0
+        length_bytes: 1
+        min_value: 0
+        max_value: 255

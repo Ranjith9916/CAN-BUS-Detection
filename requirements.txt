@@ -1,0 +1,21 @@
+# Core dependencies — pinned for reproducibility
+python-can==4.6.1
+fastapi==0.115.0
+uvicorn[standard]==0.30.6
+pydantic==2.10.6
+pydantic-settings==2.8.1
+sqlalchemy==2.0.36
+aiosqlite==0.20.0
+cryptography==46.0.3
+scikit-learn==1.7.2
+numpy==2.4.3
+pandas==2.3.3
+joblib==1.5.2
+psutil==7.2.0
+PyYAML==6.0.3
+websockets==15.0.1
+matplotlib==3.10.8
+seaborn==0.13.2
+click==8.1.7
+rich==14.0.0
+structlog==25.4.0

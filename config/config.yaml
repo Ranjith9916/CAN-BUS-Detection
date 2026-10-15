@@ -1,0 +1,140 @@
+# =============================================================================
+# CAN Security Framework — Master Configuration
+# =============================================================================
+# IMPORTANT: This is a SIMULATION/RESEARCH configuration.
+# Do NOT use these settings for real vehicle systems.
+# =============================================================================
+
+system:
+  name: "CAN Security Framework"
+  version: "0.1.0"
+  mode: "simulation"  # simulation | analysis
+  log_level: "INFO"
+  log_format: "json"  # json | text
+
+can:
+  interface: "virtual"
+  bitrate: 500000     # 500 kbit/s standard CAN
+  buffer_size: 10000
+  max_message_rate: 10000  # msg/s safety limit
+
+simulation:
+  enabled: true
+  seed: 42  # Fixed seed for reproducibility
+  tick_rate_hz: 100  # Simulation tick rate
+  duration_seconds: 60  # Default simulation duration
+  scenario: "normal_driving"  # normal_driving | city | highway | parking
+
+  # Driving scenario parameters
+  scenarios:
+    normal_driving:
+      speed_range: [0, 120]  # km/h
+      rpm_range: [700, 6000]
+      acceleration_phases: true
+      braking_phases: true
+
+ecu:
+  engine:
+    enabled: true
+    can_ids: [0x100, 0x104, 0x106]
+    period_ms: 10  # 100 Hz
+  brake:
+    enabled: true
+    can_ids: [0x102]
+    period_ms: 10  # 100 Hz
+  steering:
+    enabled: true
+    can_ids: [0x103]
+    period_ms: 20  # 50 Hz
+  transmission:
+    enabled: true
+    can_ids: [0x105]
+    period_ms: 50  # 20 Hz
+  instrument_cluster:
+    enabled: true
+    can_ids: [0x101, 0x107]
+    period_ms: 100  # 10 Hz
+  infotainment:
+    enabled: true
+    can_ids: [0x200, 0x201]
+    period_ms: 200  # 5 Hz
+
+feature_extraction:
+  window_size: 100  # messages per window
+  window_overlap: 50  # overlap in messages
+  time_window_seconds: 1.0  # alternative time-based window
+  features:
+    temporal: true
+    frequency: true
+    payload: true
+
+detection:
+  anomaly_threshold: 0.8  # ML anomaly threshold
+  rule_engine_enabled: true
+  ml_engine_enabled: true
+  ensemble_enabled: true
+
+  # Risk score thresholds
+  risk_thresholds:
+    normal: 0.29
+    low: 0.59
+    medium: 0.79
+    high: 0.94
+    critical: 1.0
+
+ml:
+  model_type: "random_forest"  # random_forest | isolation_forest | autoencoder
+  model_path: "ml/models/"
+  train_test_split: 0.2
+  validation_split: 0.1
+  random_seed: 42
+  random_forest:
+    n_estimators: 100
+    max_depth: 20
+    min_samples_split: 5
+  isolation_forest:
+    n_estimators: 100
+    contamination: 0.1
+
+authentication:
+  enabled: true
+  algorithm: "HMAC-SHA256"
+  key_length_bytes: 32
+  tag_length_bytes: 16  # Truncated MAC for CAN payload constraints
+  # Keys loaded from environment variables or secure config — never hardcoded
+  key_source: "environment"  # environment | file
+  key_rotation_interval_hours: 24
+
+freshness:
+  enabled: true
+  mechanism: "monotonic_counter"  # monotonic_counter | timestamp
+  counter_bits: 32
+  max_counter_jump: 100  # Max acceptable jump before flagging
+  stale_threshold_seconds: 5.0
+
+database:
+  url: "sqlite+aiosqlite:///data/can_security.db"
+  echo: false
+  pool_size: 5
+  max_overflow: 10
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+  cors_origins: ["http://localhost:5173", "http://localhost:3000"]
+  docs_enabled: true
+
+dashboard:
+  enabled: true
+  refresh_interval_ms: 1000
+
+alerts:
+  enabled: true
+  max_alerts_per_minute: 100
+  log_to_file: true
+  log_path: "logs/alerts.log"
+
+benchmark:
+  rates: [100, 500, 1000, 5000]
+  duration_seconds: 30
+  warmup_seconds: 5

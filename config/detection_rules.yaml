@@ -1,0 +1,65 @@
+# =============================================================================
+# Detection Rules Configuration
+# =============================================================================
+
+rules:
+  unknown_can_id:
+    enabled: true
+    severity: "HIGH"
+    description: "Detect CAN IDs not in the known ID map"
+    action: "ALERT"
+
+  invalid_dlc:
+    enabled: true
+    severity: "HIGH"
+    description: "Detect messages with unexpected DLC for their CAN ID"
+    action: "ALERT"
+
+  abnormal_frequency:
+    enabled: true
+    severity: "MEDIUM"
+    description: "Detect CAN IDs transmitting at abnormal rates"
+    # Multiplier over expected rate before triggering
+    high_threshold_multiplier: 3.0
+    low_threshold_multiplier: 0.1
+    measurement_window_seconds: 1.0
+    action: "ALERT"
+
+  excessive_burst:
+    enabled: true
+    severity: "HIGH"
+    description: "Detect sudden bursts of messages from a single CAN ID"
+    burst_threshold: 50  # messages in burst_window
+    burst_window_seconds: 0.1
+    action: "ALERT"
+
+  invalid_payload_range:
+    enabled: true
+    severity: "MEDIUM"
+    description: "Detect signal values outside configured valid ranges"
+    action: "ALERT"
+
+  unexpected_source:
+    enabled: true
+    severity: "HIGH"
+    description: "Detect CAN ID transmitted by unexpected ECU"
+    action: "ALERT"
+
+  counter_anomaly:
+    enabled: true
+    severity: "HIGH"
+    description: "Detect message counters that skip or repeat"
+    max_acceptable_gap: 5
+    action: "ALERT"
+
+  replay_violation:
+    enabled: true
+    severity: "CRITICAL"
+    description: "Detect replayed messages via freshness counter"
+    action: "REJECT"
+
+  authentication_failure:
+    enabled: true
+    severity: "CRITICAL"
+    description: "Detect messages that fail HMAC authentication"
+    action: "REJECT"
